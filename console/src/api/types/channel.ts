@@ -39,7 +39,6 @@ export interface OneBotConfig extends BaseChannelConfig {
   access_token: string;
 }
 
-
 export interface ChannelConfig {
   imessage: IMessageChannelConfig;
   discord: DiscordConfig;
