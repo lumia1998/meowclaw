@@ -12,7 +12,7 @@ on:
 jobs:
   sync_and_build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,10 +29,10 @@ jobs:
         run: |
           git remote add upstream https://github.com/agentscope-ai/CoPaw.git
           git fetch upstream
-          
+
           # 尝试合并 upstream
           git merge upstream/main --no-edit || echo "No upstream changes to merge or conflict occurred."
-          
+
           # 判断是否有更新并推送到你的 origin
           if git diff --quiet HEAD origin/main; then
             echo "No new updates from upstream syncing."

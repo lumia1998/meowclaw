@@ -7,7 +7,6 @@ It allows receiving messages from the WebSocket and sending them back via the sa
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 import threading
@@ -23,7 +22,6 @@ from agentscope_runtime.engine.schemas.agent_schemas import (
 from ..base import (
     BaseChannel,
     OnReplySent,
-    OutgoingContentPart,
     ProcessHandler,
 )
 
@@ -61,7 +59,9 @@ class OneBotChannel(BaseChannel):
 
     @classmethod
     def from_env(
-        cls, process: ProcessHandler, on_reply_sent: OnReplySent = None
+        cls,
+        process: ProcessHandler,
+        on_reply_sent: OnReplySent = None,
     ) -> "OneBotChannel":
         import os
 
@@ -124,7 +124,8 @@ class OneBotChannel(BaseChannel):
             import websocket
         except ImportError:
             logger.error(
-                "websocket-client not installed. Please run: pip install websocket-client"
+                "websocket-client not installed. Please run: pip install "
+                "websocket-client",
             )
             return
 
@@ -136,7 +137,10 @@ class OneBotChannel(BaseChannel):
                 headers = {}
                 if self.access_token:
                     headers["Authorization"] = f"Bearer {self.access_token}"
-                self._ws = websocket.create_connection(self.ws_url, header=headers)
+                self._ws = websocket.create_connection(
+                    self.ws_url,
+                    header=headers,
+                )
                 retry_delay = 1
                 logger.info("OneBot connected.")
 
@@ -154,7 +158,10 @@ class OneBotChannel(BaseChannel):
             if self._stop_event.is_set():
                 break
 
-            logger.info("OneBot ws disconnected, retry in %s seconds...", retry_delay)
+            logger.info(
+                "OneBot ws disconnected, retry in %s seconds...",
+                retry_delay,
+            )
             time.sleep(retry_delay)
             retry_delay = min(retry_delay * 2, 60)
 
@@ -210,17 +217,24 @@ class OneBotChannel(BaseChannel):
 
         if self._enqueue is not None:
             self._enqueue(request)
-            logger.info("OneBot enqueued request from %s: %r", caller_id, text[:50])
+            logger.info(
+                "OneBot enqueued request from %s: %r",
+                caller_id,
+                text[:50],
+            )
 
     async def consume_one(self, payload: Any) -> None:
-        """Process one AgentRequest from manager queue, similar to other channels."""
+        """Process one AgentRequest from manager queue."""
         request = payload
-        
+
         # Debounce mechanism (similar to QQ)
         if getattr(request, "input", None):
             session_id = getattr(request, "session_id", "") or ""
             contents = list(getattr(request.input[0], "content", None) or [])
-            should_process, merged = self._apply_no_text_debounce(session_id, contents)
+            should_process, merged = self._apply_no_text_debounce(
+                session_id,
+                contents,
+            )
             if not should_process:
                 return
             if merged:
@@ -264,15 +278,23 @@ class OneBotChannel(BaseChannel):
                 fallback_handle = getattr(request, "user_id", "")
                 await self.send_content_parts(
                     fallback_handle,
-                    [{"type": "text", "text": "An error occurred while processing your request."}],
+                    [
+                        {
+                            "type": "text",
+                            "text": "An error occurred while processing "
+                            "your request.",
+                        },
+                    ],
                     getattr(request, "channel_meta", None) or {},
                 )
             except Exception:
                 pass
 
-
     async def send(
-        self, to_handle: str, text: str, meta: Optional[Dict[str, Any]] = None
+        self,
+        to_handle: str,
+        text: str,
+        meta: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Send message via the connected websocket."""
         if not self.enabled or not text.strip() or not self._ws:
@@ -290,7 +312,11 @@ class OneBotChannel(BaseChannel):
             # If private message, target the sender
             params["user_id"] = int(meta.get("sender_id", to_handle))
 
-        api_req = {"action": "send_msg", "params": params, "echo": "copaw_reply"}
+        api_req = {
+            "action": "send_msg",
+            "params": params,
+            "echo": "copaw_reply",
+        }
 
         try:
             self._ws.send(json.dumps(api_req))

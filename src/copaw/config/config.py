@@ -63,7 +63,6 @@ class OneBotConfig(BaseChannelConfig):
     access_token: str = ""
 
 
-
 class ChannelConfig(BaseModel):
     """Built-in channel configs; extra keys allowed for plugin channels."""
 
