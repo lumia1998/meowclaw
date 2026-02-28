@@ -257,6 +257,9 @@ class OneBotChannel(BaseChannel):
                 obj = getattr(event, "object", None)
                 status = getattr(event, "status", None)
                 if obj == "message" and status == RunStatus.Completed:
+                    # Skip internal agent "thought" events, only output real replies
+                    if getattr(event, "name", None) == "thought":
+                        continue
                     parts = self._message_to_content_parts(event)
                     accumulated_parts.extend(parts)
 
