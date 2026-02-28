@@ -1,0 +1,59 @@
+name: Auto Sync Upstream & Build Docker
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  sync_and_build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Sync upstream changes
+        id: sync
+        run: |
+          git remote add upstream https://github.com/agentscope-ai/CoPaw.git
+          git fetch upstream
+          
+          # 尝试合并 upstream
+          git merge upstream/main --no-edit || echo "No upstream changes to merge or conflict occurred."
+          
+          # 判断是否有更新并推送到你的 origin
+          if git diff --quiet HEAD origin/main; then
+            echo "No new updates from upstream syncing."
+          else
+            echo "New updates found and merged."
+            git push origin HEAD:main || echo "Push failed"
+          fi
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          COPAW_ENABLED_CHANNELS="dingtalk,feishu,qq,onebot,console" \
+          bash scripts/docker_build.sh lumia1998/meowclaw:latest --push

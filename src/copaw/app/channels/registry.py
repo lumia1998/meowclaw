@@ -15,6 +15,7 @@ from .discord_ import DiscordChannel
 from .feishu import FeishuChannel
 from .imessage import IMessageChannel
 from .qq import QQChannel
+from .onebot import OneBotChannel
 
 if TYPE_CHECKING:
     pass
@@ -28,6 +29,7 @@ _BUILTIN: dict[str, type[BaseChannel]] = {
     "feishu": FeishuChannel,
     "qq": QQChannel,
     "console": ConsoleChannel,
+    "onebot": OneBotChannel,
 }
 
 

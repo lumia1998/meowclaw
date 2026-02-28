@@ -34,12 +34,19 @@ export interface QQConfig extends BaseChannelConfig {
 
 export type ConsoleConfig = BaseChannelConfig;
 
+export interface OneBotConfig extends BaseChannelConfig {
+  ws_url: string;
+  access_token: string;
+}
+
+
 export interface ChannelConfig {
   imessage: IMessageChannelConfig;
   discord: DiscordConfig;
   dingtalk: DingTalkConfig;
   feishu: FeishuConfig;
   qq: QQConfig;
+  onebot: OneBotConfig;
   console: ConsoleConfig;
 }
 
@@ -49,4 +56,5 @@ export type SingleChannelConfig =
   | DingTalkConfig
   | FeishuConfig
   | QQConfig
+  | OneBotConfig
   | ConsoleConfig;

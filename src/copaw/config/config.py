@@ -58,6 +58,12 @@ class ConsoleConfig(BaseChannelConfig):
     enabled: bool = True
 
 
+class OneBotConfig(BaseChannelConfig):
+    ws_url: str = "ws://127.0.0.1:3001"
+    access_token: str = ""
+
+
+
 class ChannelConfig(BaseModel):
     """Built-in channel configs; extra keys allowed for plugin channels."""
 
@@ -68,6 +74,7 @@ class ChannelConfig(BaseModel):
     dingtalk: DingTalkConfig = DingTalkConfig()
     feishu: FeishuConfig = FeishuConfig()
     qq: QQConfig = QQConfig()
+    onebot: OneBotConfig = OneBotConfig()
     console: ConsoleConfig = ConsoleConfig()
 
 
@@ -194,5 +201,6 @@ ChannelConfigUnion = Union[
     DingTalkConfig,
     FeishuConfig,
     QQConfig,
+    OneBotConfig,
     ConsoleConfig,
 ]

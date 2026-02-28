@@ -126,6 +126,26 @@ export function ChannelDrawer({
             </Form.Item>
           </>
         );
+      case "onebot":
+        return (
+          <>
+            <Form.Item
+              name="ws_url"
+              label="WebSocket URL"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the WebSocket URL",
+                },
+              ]}
+            >
+              <Input placeholder="ws://127.0.0.1:3001" />
+            </Form.Item>
+            <Form.Item name="access_token" label="Access Token">
+              <Input.Password placeholder="Optional access token" />
+            </Form.Item>
+          </>
+        );
       default:
         return null;
     }
