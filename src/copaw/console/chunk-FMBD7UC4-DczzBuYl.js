@@ -6,7 +6,7 @@ import{_ as e}from"./index-Bxl_tD8w.js";var l=e(()=>`
     overflow: visible;
     vertical-align: -0.125em;
   }
-  
+
   .node .label-icon path {
     fill: currentColor;
     stroke: revert;
