@@ -2,7 +2,8 @@
 """OneBot Channel.
 
 OneBot uses forward WebSocket to connect to NapCatQQ, Go-CQHttp etc.
-It allows receiving messages from the WebSocket and sending them back via the same connection.
+It allows receiving messages from the WebSocket and sending them back
+via the same connection.
 """
 
 from __future__ import annotations
